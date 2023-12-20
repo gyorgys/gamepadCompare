@@ -1,0 +1,150 @@
+<head>
+    <title>Gamepad Joystick Compare</title>
+    <style>
+        table {
+            table-layout: fixed;
+            border-collapse: collapse;
+            border: 4px solid lightslategray;
+        }
+
+        th,
+        td {
+            padding: 8px;
+            border: 2px solid gray;
+        }
+
+        tbody td {
+            text-align: center;
+        }
+    </style>
+    <script>
+        const gamepads = {};
+
+        function gamepadHandler(event, connected) {
+            const gamepad = event.gamepad;
+            // Note:
+            // gamepad === navigator.getGamepads()[gamepad.index]
+
+            if (connected) {
+                gamepads[gamepad.index] = gamepad;
+            } else {
+                delete gamepads[gamepad.index];
+            }
+            if (Object.keys(gamepads).length > 0) {
+                requestAnimationFrame(updateGamepadStatus);
+            }
+        }
+
+        function updateGamepadStatus() {
+            const currrentGamepads = navigator.getGamepads();
+            for (const gamepad of currrentGamepads) {
+                if (gamepad) {
+                    // Can be null if disconnected during the session
+                    if (gamepad.index in gamepads) {
+                        gamepads[gamepad.index] = gamepad;
+                    }
+                }
+            }
+            updateGamepadStatusFor(0);
+            updateGamepadStatusFor(1);
+            if (Object.keys(gamepads).length > 0) {
+                requestAnimationFrame(updateGamepadStatus);
+            }
+        }
+
+        function updateGamepadStatusFor(i) {
+            const statusElem = document.getElementById(`status${i}`);
+            const rxElem = document.getElementById(`rx${i}`);
+            const ryElem = document.getElementById(`ry${i}`);
+            const lxElem = document.getElementById(`lx${i}`);
+            const lyElem = document.getElementById(`ly${i}`);
+            if (gamepads[i]) {
+                statusElem.textContent = "Connected";
+                const gamepad = gamepads[i];
+                rxElem.textContent = toPercent(gamepad.axes[2]);
+                ryElem.textContent = toPercent(gamepad.axes[3]);
+                lxElem.textContent = toPercent(gamepad.axes[0]);
+                lyElem.textContent = toPercent(gamepad.axes[1]);
+            } else {
+                statusElem.textContent = "Not connected";
+                rxElem.textContent = "0";
+                ryElem.textContent = "0";
+                lxElem.textContent = "0";
+                lyElem.textContent = "0";
+            }
+        }
+
+        function toPercent(val) {
+            return (val * 100.0).toFixed(2); 
+        }
+
+        window.addEventListener(
+            "gamepadconnected",
+            (e) => {
+                console.log(
+                    "Gamepad connected at index %d: %s. %d buttons, %d axes.",
+                    e.gamepad.index,
+                    e.gamepad.id,
+                    e.gamepad.buttons.length,
+                    e.gamepad.axes.length,
+                );
+                gamepadHandler(e, true);
+            },
+            false,
+        );
+        window.addEventListener(
+            "gamepaddisconnected",
+            (e) => {
+                console.log(
+                    "Gamepad disconnected from index %d: %s",
+                    e.gamepad.index,
+                    e.gamepad.id,
+                );
+                gamepadHandler(e, false);
+            },
+            false,
+        );
+
+    </script>
+</head>
+
+<body style="background:#eeeff2">
+    <div id="root">
+        <table>
+            <thead>
+                <tr>
+                    <th>&nbsp;</th>
+                    <th scope="col">Built-in Controller</th>
+                    <th scope="col">External Controller</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <th scope="row">Status</th>
+                    <td id="status0">Not connected</td>
+                    <td id="status1">Not connected</td>
+                </tr>
+                <tr>
+                    <th scope="row">Right X</th>
+                    <td id="rx0">0</td>
+                    <td id="rx1">0</td>
+                </tr>
+                <tr>
+                    <th scope="row">Right Y</th>
+                    <td id="ry0">0</td>
+                    <td id="ry1">0</td>
+                </tr>
+                <tr>
+                    <th scope="row">Left X</th>
+                    <td id="lx0">0</td>
+                    <td id="lx1">0</td>
+                </tr>
+                <tr>
+                    <th scope="row">Left Y</th>
+                    <td id="ly0">0</td>
+                    <td id="ly1">0</td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+</body>
