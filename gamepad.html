@@ -32,12 +32,16 @@
             } else {
                 gamepadIds = gamepadIds.filter((id) => id != gamepad.id)
             }
+            updateGamepadStatus()
         }
 
         function updateGamepadStatus() {
             const currrentGamepads = navigator.getGamepads();
             updateGamepadStatusFor(0, currrentGamepads);
             updateGamepadStatusFor(1, currrentGamepads);
+            if (gamepadIds.length > 0) {
+                requestAnimationFrame(updateGamepadStatus)
+            }
         }
 
         function updateGamepadStatusFor(i, gamepads) {
@@ -95,9 +99,6 @@
             },
             false,
         );
-
-        setInterval(updateGamepadStatus, 1000 / 60)
-
     </script>
 </head>
 
