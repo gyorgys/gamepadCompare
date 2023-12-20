@@ -4,7 +4,7 @@ This web app intends to help adjusting the dead zone / response curve setting of
 
 ## Usage
 
-Copy the HTML file somewhere on your system, e.g. your Desktop or Documents folder. Go to [this link](https://github.com/gyorgys/gamepadCompare/blob/master/gamepad.html) and use the 'Download raw file' button)
+Copy the HTML file somewhere on your system, e.g. your Desktop or Documents folder. (Go to [this link](https://github.com/gyorgys/gamepadCompare/blob/master/gamepad.html) and use the 'Download raw file' button)
 
 Open the HTML file in your browser.
 
